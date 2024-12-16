@@ -1,12 +1,23 @@
 {
-  "name": "json-pack",
+  "name": "@kscript/json-pack",
   "version": "1.0.0",
-  "description": "",
+  "description": "json pack",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "json",
+    "pack",
+    "compress"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kscript/json-pack.git"
+  },
+  "author": "luren",
   "license": "ISC"
 }
