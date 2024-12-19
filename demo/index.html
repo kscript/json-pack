@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>代码演示页面</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .input-output-container {
+      flex: 1;
+    }
+
+    textarea {
+      width: 100%;
+      height: calc(100vh - 300px);
+      margin-bottom: 10px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      resize: vertical;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      margin: 0 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      height: calc(100% - 55px);
+      margin-top: 10px;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background-color: #fafafa;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      color: #333;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .align-center {
+      align-items: center;
+    }
+
+    .justify-beteen {
+      justify-content: space-between;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="input-output-container">
+        <h2>JSON</h2>
+        <textarea id="data" placeholder="JSON或JS对象">
+        </textarea>
+      </div>
+      <div class="input-output-container">
+        <div class="flex justify-beteen align-center">
+          <h2>压缩后文本</h2>
+          <small id="length"></small>
+        </div>
+        <textarea id="content" placeholder="压缩后文本"></textarea>
+      </div>
+    </div>
+    <div class="flex" style="margin: 0 -10px;">
+      <button id="compress">&gt;&gt; 压缩 &gt;&gt;</button>
+      <button id="decompress">&lt;&lt; 解压 &lt;&lt;</button>
+    </div>
+  </div>
+  <script src="//unpkg.com/@kscript/require"></script>
+  <script type="module">
+    const jsonpack = await require('../index.js')
+    const dataElement = document.getElementById('data')
+    const contentElement = document.getElementById('content')
+    const compressElement = document.getElementById('compress')
+    const decompressElement = document.getElementById('decompress')
+    const lengthElement = document.getElementById('length')
+    const defaultData = {
+      a: 1,
+      aa: 11,
+      aaa: 111,
+      aaaa: {
+        b: 2,
+        bb: 22,
+        bbb: 222,
+        bbbb: {
+          a: 3,
+          aa: 33,
+          aa: 333
+        }
+      },
+      d: [
+        {
+          a: 1,
+          d: 4
+        },
+        {
+          aa: 11,
+          dd: 44
+        },
+        {
+          aaa: 111,
+          ddd: 444
+        },
+        {
+          aaaa: 1111,
+          dddd: 4444
+        },
+        {
+          aaaa: 1111,
+          dddd: 4444
+        },
+        {
+          aaaa: 1111,
+          dddd: 4444
+        }
+      ]
+    }
+
+    const convert = (type) => {
+      if (type === 0) {
+        try {
+          const data = eval(`(${dataElement.value})`)
+          contentElement.value = jsonpack.compress(data)
+          contentElement.dispatchEvent(new Event('change'))
+        } catch (e) {
+          alert('参数错误, 压缩失败')
+        }
+      } else if (type === 1) {
+        const content = contentElement.value
+        if (content.length === 0) {
+          alert('空字符串, 解压失败')
+        }
+        dataElement.value = JSON.stringify(jsonpack.decompress(content), null, 2)
+      }
+    }
+
+    dataElement.value = JSON.stringify(defaultData, null, 2)
+    compressElement.addEventListener('click', () => convert(0))
+    decompressElement.addEventListener('click', () => convert(1))
+    contentElement.addEventListener('change', () => {
+      lengthElement.innerText = '压缩后长度:' + contentElement.value.length
+    })
+  </script>
+</body>
+
+</html>
